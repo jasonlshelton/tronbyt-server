@@ -56,9 +56,10 @@ func TestHandleDeleteUser_UnsafeUsernameKeepsDataDir(t *testing.T) {
 	s := newTestServer(t)
 	ctx := context.Background()
 
-	admin := data.User{Username: "admin", IsAdmin: true}
+	// api_key is unique, so each user needs its own.
+	admin := data.User{Username: "admin", IsAdmin: true, APIKey: "admin-key"}
 	require.NoError(t, gorm.G[data.User](s.DB).Create(ctx, &admin))
-	bad := data.User{Username: ".."}
+	bad := data.User{Username: "..", APIKey: "bad-key"}
 	require.NoError(t, gorm.G[data.User](s.DB).Create(ctx, &bad))
 	// An empty device ID maps to the shared webp directory.
 	require.NoError(t, gorm.G[data.Device](s.DB).Create(ctx, &data.Device{ID: "", Username: ".."}))
